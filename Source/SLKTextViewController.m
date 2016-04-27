@@ -193,7 +193,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     
     // Forces laying out the recently added subviews and update their constraints
     [self.view layoutIfNeeded];
-	
+    
     [UIView performWithoutAnimation:^{
         // Reloads any cached text
         [self slk_reloadTextView];
@@ -436,7 +436,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 - (CGFloat)slk_appropriateScrollViewHeight
 {
     CGFloat scrollViewHeight = CGRectGetHeight(self.view.bounds);
-	
+    
     scrollViewHeight -= self.keyboardHC.constant;
     scrollViewHeight -= self.autoCompletionViewHC.constant;
     scrollViewHeight -= self.typingIndicatorViewHC.constant;
