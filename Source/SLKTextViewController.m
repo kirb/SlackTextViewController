@@ -56,6 +56,8 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 // Optional classes to be used instead of the default ones.
 @property (nonatomic, strong) Class textInputbarClass;
 @property (nonatomic, strong) Class textViewClass;
+@property (nonatomic, strong) Class leftButtonClass;
+@property (nonatomic, strong) Class rightButtonClass;
 @property (nonatomic, strong) Class typingIndicatorViewClass;
 
 @end
@@ -313,7 +315,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     if (!_textInputbar) {
         Class inputbarClass = self.textInputbarClass ?: SLKTextInputbar.class;
         
-        _textInputbar = [[inputbarClass alloc] initWithTextViewClass:self.textViewClass];
+        _textInputbar = [[inputbarClass alloc] initWithTextViewClass:self.textViewClass leftButtonClass:self.leftButtonClass rightButtonClass:self.rightButtonClass];
         _textInputbar.translatesAutoresizingMaskIntoConstraints = NO;
         
         [_textInputbar.leftButton addTarget:self action:@selector(didPressLeftButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -1864,6 +1866,26 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     self.textViewClass = aClass;
 }
 
+- (void)registerClassForLeftButton:(Class)aClass
+{
+    if (aClass == nil) {
+        return;
+    }
+    
+    NSAssert([aClass isSubclassOfClass:[UIButton class]], @"The registered class is invalid, it must be a subclass of UIButton.");
+    self.leftButtonClass = aClass;
+}
+
+- (void)registerClassForRightButton:(Class)aClass
+{
+    if (aClass == nil) {
+        return;
+    }
+    
+    NSAssert([aClass isSubclassOfClass:[UIButton class]], @"The registered class is invalid, it must be a subclass of UIButton.");
+    self.rightButtonClass = aClass;
+}
+
 - (void)registerClassForTypingIndicatorView:(Class)aClass
 {
     if (aClass == nil) {
@@ -2359,6 +2381,8 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     _textInputbar = nil;
     _textInputbarClass = nil;
     _textViewClass = nil;
+    _leftButtonClass = nil;
+    _rightButtonClass = nil;
     
     [_typingIndicatorProxyView removeObserver:self forKeyPath:@"visible"];
     _typingIndicatorProxyView = nil;
