@@ -185,7 +185,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     if (!_rightButton) {
         Class buttonClass = _rightButtonClass ?: UIButton.class;
         
-        _leftButton = [buttonClass buttonWithType:UIButtonTypeSystem];
+        _rightButton = [buttonClass buttonWithType:UIButtonTypeSystem];
         _rightButton.translatesAutoresizingMaskIntoConstraints = NO;
         _rightButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
         _rightButton.enabled = NO;
