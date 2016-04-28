@@ -47,12 +47,12 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 #pragma mark - Initialization
 
-- (instancetype)initWithTextViewClass:(Class)textViewClass
+- (instancetype)initWithTextViewClass:(nullable Class)textViewClass
 {
     return [self initWithTextViewClass:textViewClass leftButtonClass:nil rightButtonClass:nil];
 }
 
-- (instancetype)initWithTextViewClass:(Class)textViewClass leftButtonClass:(Class)leftButtonClass rightButtonClass:(Class)rightButtonClass
+- (instancetype)initWithTextViewClass:(nullable Class)textViewClass leftButtonClass:(nullable Class)leftButtonClass rightButtonClass:(nullable Class)rightButtonClass
 {
     if (self = [super init]) {
         self.textViewClass = textViewClass;

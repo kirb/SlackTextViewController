@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param rightButtonClass The class to be used when creating the right button. May be nil. If provided, the class must be a subclass of UIButton
  @return An initialized SLKTextInputbar object or nil if the object could not be created.
  */
-- (instancetype)initWithTextViewClass:(Class)textViewClass leftButtonClass:(Class)leftButtonClass rightButtonClass:(Class)rightButtonClass;
+- (instancetype)initWithTextViewClass:(nullable Class)textViewClass leftButtonClass:(nullable Class)leftButtonClass rightButtonClass:(nullable Class)rightButtonClass;
 
 /**
  Initializes a text input bar with a class to be used for the text view
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param textViewClass The class to be used when creating the text view. May be nil. If provided, the class must be a subclass of SLKTextView
  @return An initialized SLKTextInputbar object or nil if the object could not be created.
  */
-- (instancetype)initWithTextViewClass:(Class)textViewClass;
+- (instancetype)initWithTextViewClass:(nullable Class)textViewClass;
 
 
 #pragma mark - Text Editing
