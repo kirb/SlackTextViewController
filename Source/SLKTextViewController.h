@@ -529,6 +529,14 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 ///------------------------------------------------
 
 /**
+ Registers a class for customizing the behavior and appearance of the text input bar.
+ You need to call this method inside of any initialization method.
+ 
+ @param aClass A SLKTextInputbar subclass.
+ */
+- (void)registerClassForTextInputbar:(Class _Nullable)aClass;
+
+/**
  Registers a class for customizing the behavior and appearance of the text view.
  You need to call this method inside of any initialization method.
  
