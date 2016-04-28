@@ -67,6 +67,16 @@ NS_ASSUME_NONNULL_BEGIN
 ///------------------------------------------------
 
 /**
+ Initializes a text input bar with a class to be used for the text view, and left and right buttons
+ 
+ @param textViewClass The class to be used when creating the text view. May be nil. If provided, the class must be a subclass of SLKTextView
+ @param leftButtonClass The class to be used when creating the left button. May be nil. If provided, the class must be a subclass of UIButton
+ @param rightButtonClass The class to be used when creating the right button. May be nil. If provided, the class must be a subclass of UIButton
+ @return An initialized SLKTextInputbar object or nil if the object could not be created.
+ */
+- (instancetype)initWithTextViewClass:(Class)textViewClass leftButtonClass:(Class)leftButtonClass rightButtonClass:(Class)rightButtonClass;
+
+/**
  Initializes a text input bar with a class to be used for the text view
  
  @param textViewClass The class to be used when creating the text view. May be nil. If provided, the class must be a subclass of SLKTextView

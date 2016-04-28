@@ -35,6 +35,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 @property (nonatomic) CGPoint previousOrigin;
 
 @property (nonatomic, strong) Class textViewClass;
+@property (nonatomic, strong) Class leftButtonClass;
+@property (nonatomic, strong) Class rightButtonClass;
 
 @property (nonatomic, getter=isHidden) BOOL hidden; // Required override
 
@@ -47,8 +49,15 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 - (instancetype)initWithTextViewClass:(Class)textViewClass
 {
+    return [self initWithTextViewClass:textViewClass leftButtonClass:nil rightButtonClass:nil];
+}
+
+- (instancetype)initWithTextViewClass:(Class)textViewClass leftButtonClass:(Class)leftButtonClass rightButtonClass:(Class)rightButtonClass
+{
     if (self = [super init]) {
         self.textViewClass = textViewClass;
+        self.leftButtonClass = leftButtonClass;
+        self.rightButtonClass = rightButtonClass;
         [self slk_commonInit];
     }
     return self;
@@ -162,7 +171,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 - (UIButton *)leftButton
 {
     if (!_leftButton) {
-        _leftButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        Class buttonClass = _leftButtonClass ?: UIButton.class;
+        
+        _leftButton = [buttonClass buttonWithType:UIButtonTypeSystem];
         _leftButton.translatesAutoresizingMaskIntoConstraints = NO;
         _leftButton.titleLabel.font = [UIFont systemFontOfSize:15.0];
     }
@@ -172,7 +183,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 - (UIButton *)rightButton
 {
     if (!_rightButton) {
-        _rightButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        Class buttonClass = _rightButtonClass ?: UIButton.class;
+        
+        _leftButton = [buttonClass buttonWithType:UIButtonTypeSystem];
         _rightButton.translatesAutoresizingMaskIntoConstraints = NO;
         _rightButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
         _rightButton.enabled = NO;
