@@ -28,7 +28,6 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 {
     CGPoint _scrollViewOffsetBeforeDragging;
     CGFloat _keyboardHeightBeforeDragging;
-    CGFloat _inputbarHeight;
 }
 
 // The shared scrollView pointer, either a tableView or collectionView
@@ -621,7 +620,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 - (void)dismissKeyboard:(BOOL)animated
 {
     // Dismisses the keyboard from any first responder in the window.
-    if (![self.textView isFirstResponder] && self.keyboardHC.constant > _inputbarHeight) {
+    if (![self.textView isFirstResponder] && self.keyboardHC.constant > self.textInputbarHC.constant) {
         [self.view.window endEditing:NO];
     }
     
@@ -670,9 +669,9 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     _textInputbar.rightButton.enabled = [self canPressRightButton];
     _textInputbar.editorRightButton.enabled = [self canPressRightButton];
     
-    if (inputbarHeight != _inputbarHeight)
+    if (inputbarHeight != self.textInputbarHC.constant)
     {
-        _inputbarHeight = inputbarHeight;
+        self.textInputbarHC.constant = inputbarHeight;
         self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
         
         if (animated) {
@@ -884,7 +883,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     
     void (^animations)() = ^void(){
         
-        _inputbarHeight = hidden ? 0 : weakSelf.textInputbar.appropriateHeight;
+        self.textInputbarHC.constant = hidden ? 0 : weakSelf.textInputbar.appropriateHeight;
         
         [weakSelf.view layoutIfNeeded];
     };
@@ -950,7 +949,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     // Skips this if it's not the expected textView.
     // Checking the keyboard height constant helps to disable the view constraints update on iPad when the keyboard is undocked.
     // Checking the keyboard status allows to keep the inputAccessoryView valid when still reacing the bottom of the screen.
-    if (![self.textView isFirstResponder] || (self.keyboardHC.constant == _inputbarHeight && self.keyboardStatus == SLKKeyboardStatusDidHide)) {
+    if (![self.textView isFirstResponder] || (self.keyboardHC.constant == self.textInputbarHC.constant && self.keyboardStatus == SLKKeyboardStatusDidHide)) {
 #if SLKBottomPanningEnabled
         if ([gesture.view isEqual:self.scrollViewProxy]) {
             if (gestureVelocity.y > 0) {
@@ -1178,11 +1177,11 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 
 - (void)slk_dismissTextInputbarIfNeeded
 {
-    if (self.keyboardHC.constant == _inputbarHeight) {
+    if (self.keyboardHC.constant == self.textInputbarHC.constant) {
         return;
     }
     
-    self.keyboardHC.constant = _inputbarHeight;
+    self.keyboardHC.constant = self.textInputbarHC.constant;
     self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
     
     [self slk_hideAutoCompletionViewIfNeeded];
@@ -1304,7 +1303,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         [self didCancelTextEditing:keyCommand];
     }
     
-    if ([self ignoreTextInputbarAdjustment] || ([self.textView isFirstResponder] && self.keyboardHC.constant == _inputbarHeight)) {
+    if ([self ignoreTextInputbarAdjustment] || ([self.textView isFirstResponder] && self.keyboardHC.constant == self.textInputbarHC.constant)) {
         return;
     }
     
@@ -2198,12 +2197,12 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 
 - (void)slk_updateViewConstraints
 {
-    _inputbarHeight = self.textInputbar.minimumInputbarHeight;
+    self.textInputbarHC.constant = self.textInputbar.minimumInputbarHeight;
     self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
     self.keyboardHC.constant = [self slk_appropriateKeyboardHeightFromRect:CGRectNull];
     
     if (_textInputbar.isEditing) {
-        _inputbarHeight += self.textInputbar.editorContentViewHeight;
+        self.textInputbarHC.constant += self.textInputbar.editorContentViewHeight;
     }
     
     [super updateViewConstraints];
