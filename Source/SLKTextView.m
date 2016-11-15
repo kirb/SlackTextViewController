@@ -137,12 +137,13 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
     if (!_placeholderLabel) {
         _placeholderLabel = [UILabel new];
         _placeholderLabel.clipsToBounds = NO;
-        _placeholderLabel.autoresizesSubviews = NO;
         _placeholderLabel.numberOfLines = 1;
+        _placeholderLabel.autoresizesSubviews = NO;
         _placeholderLabel.font = self.font;
         _placeholderLabel.backgroundColor = [UIColor clearColor];
         _placeholderLabel.textColor = [UIColor lightGrayColor];
         _placeholderLabel.hidden = YES;
+        _placeholderLabel.isAccessibilityElement = NO;
         
         [self addSubview:_placeholderLabel];
     }
@@ -157,6 +158,11 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
 - (UIColor *)placeholderColor
 {
     return self.placeholderLabel.textColor;
+}
+
+- (UIFont *)placeholderFont
+{
+    return self.placeholderLabel.font;
 }
 
 - (NSUInteger)numberOfLines
@@ -400,6 +406,23 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
     self.placeholderLabel.textColor = color;
 }
 
+- (void)setPlaceholderNumberOfLines:(NSInteger)numberOfLines
+{
+    self.placeholderLabel.numberOfLines = numberOfLines;
+    
+    [self setNeedsLayout];
+}
+
+- (void)setPlaceholderFont:(UIFont *)placeholderFont
+{
+    if (!placeholderFont) {
+        self.placeholderLabel.font = self.font;
+    }
+    else {
+        self.placeholderLabel.font = placeholderFont;
+    }
+}
+
 - (void)setUndoManagerEnabled:(BOOL)enabled
 {
     if (self.undoManagerEnabled == enabled) {
@@ -438,6 +461,8 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 - (void)setSelectedRange:(NSRange)selectedRange
 {
     [super setSelectedRange:selectedRange];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:SLKTextViewSelectedRangeDidChangeNotification object:self userInfo:nil];
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -451,10 +476,20 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 {
     // Registers for undo management
     [self slk_prepareForUndo:@"Text Set"];
-    
-    [super setText:text];
+
+    if (text) {
+        [self setAttributedText:[self slk_defaultAttributedStringForText:text]];
+    }
+    else {
+        [self setAttributedText:nil];
+    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
+}
+
+- (NSString *)text
+{
+    return self.attributedText.string;
 }
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
@@ -876,7 +911,7 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 
 - (void)slk_willShowMenuController:(NSNotification *)notification
 {
-    
+    // Do something
 }
 
 - (void)slk_didHideMenuController:(NSNotification *)notification

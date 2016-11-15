@@ -135,7 +135,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  @param style A constant that specifies the style of main table view that the controller object is to manage (UITableViewStylePlain or UITableViewStyleGrouped).
  @return An initialized SLKTextViewController object or nil if the object could not be created.
  */
-- (instancetype)initWithTableViewStyle:(UITableViewStyle)style SLK_DESIGNATED_INITIALIZER;
+- (instancetype __nullable)initWithTableViewStyle:(UITableViewStyle)style;
 
 /**
  Initializes a collection view controller and configures the collection view with the provided layout.
@@ -144,7 +144,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  @param layout The layout object to associate with the collection view. The layout controls how the collection view presents its cells and supplementary views.
  @return An initialized SLKTextViewController object or nil if the object could not be created.
  */
-- (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout SLK_DESIGNATED_INITIALIZER;
+- (instancetype __nullable)initWithCollectionViewLayout:(UICollectionViewLayout *)layout;
 
 /**
  Initializes a text view controller to manage an arbitraty scroll view. The caller is responsible for configuration of the scroll view, including wiring the delegate.
@@ -152,7 +152,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  @param a UISCrollView to be used as the main content area.
  @return An initialized SLKTextViewController object or nil if the object could not be created.
  */
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView SLK_DESIGNATED_INITIALIZER;
+- (instancetype __nullable)initWithScrollView:(UIScrollView *)scrollView;
 
 /**
  Initializes either a table or collection view controller.
@@ -161,7 +161,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  @param decoder An unarchiver object.
  @return An initialized SLKTextViewController object or nil if the object could not be created.
  */
-- (instancetype)initWithCoder:(NSCoder *)decoder SLK_DESIGNATED_INITIALIZER;
+- (instancetype __nullable)initWithCoder:(NSCoder *)decoder;
 
 /**
  Returns the tableView style to be configured when using Interface Builder. Default is UITableViewStylePlain.
@@ -379,6 +379,15 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 - (void)editText:(NSString *)text NS_REQUIRES_SUPER;
 
 /**
+ Re-uses the text layout for edition, displaying an accessory view on top of the text input bar with options (cancel & save).
+ You can override this method to perform additional tasks
+ You MUST call super at some point in your implementation.
+ 
+ @param attributedText The attributed text to edit.
+ */
+- (void)editAttributedText:(NSAttributedString *)attributedText NS_REQUIRES_SUPER;
+
+/**
  Notifies the view controller when the editing bar's right button's action has been triggered, manually or by using the external keyboard's Return key.
  You can override this method to perform additional tasks associated with accepting changes.
  You MUST call super at some point in your implementation.
@@ -434,16 +443,26 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  You can override this method to disable momentarily the auto-completion feature, or to let it visible for longer time.
  You SHOULD call super to inherit some conditionals.
  
- @param text The textView's current text.
  @return YES if the controller is allowed to process the text for auto-completion.
  */
-- (BOOL)shouldProcessTextForAutoCompletion:(NSString *)text NS_REQUIRES_SUPER;
+- (BOOL)shouldProcessTextForAutoCompletion;
+- (BOOL)shouldProcessTextForAutoCompletion:(NSString *)text DEPRECATED_MSG_ATTRIBUTE("Use -shouldProcessTextForAutoCompletion instead.");
+
+/**
+ During text autocompletion, by default, auto-correction and spell checking are disabled.
+ Doing so, refreshes the text input to get rid of the Quick Type bar.
+ You can override this method to avoid disabling in some cases.
+ 
+ @return YES if the controller should not hide the quick type bar.
+ */
+- (BOOL)shouldDisableTypingSuggestionForAutoCompletion;
 
 /**
  Notifies the view controller either the autocompletion prefix or word have changed.
  Use this method to modify your data source or fetch data asynchronously from an HTTP resource.
  Once your data source is ready, make sure to call -showAutoCompletionView: to display the view accordingly.
  You don't need call super since this method doesn't do anything.
+ You SHOULD call super to inherit some conditionals.
 
  @param prefix The detected prefix.
  @param word The derected word.
@@ -457,6 +476,16 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  @param show YES if the autocompletion view should be shown.
  */
 - (void)showAutoCompletionView:(BOOL)show;
+
+/**
+ Use this method to programatically show the autocompletion view, with provided prefix and word to search.
+ Right before the view is shown, -reloadData is called. So avoid calling it manually.
+ 
+ @param prefix A prefix that is used to trigger autocompletion
+ @param word A word to search for autocompletion
+ @param prefixRange The range in which prefix spans.
+*/
+- (void)showAutoCompletionViewWithPrefix:(NSString *)prefix andWord:(NSString *)word prefixRange:(NSRange)prefixRange;
 
 /**
  Returns a custom height for the autocompletion view. Default is 0.0.
@@ -512,7 +541,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 - (nullable NSString *)keyForTextCaching;
 
 /**
- Removes the current's vien controller cached text.
+ Removes the current view controller's cached text.
  To enable this, you must return a valid key string in -keyForTextCaching.
  */
 - (void)clearCachedText;
@@ -521,6 +550,11 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
  Removes all the cached text from disk.
  */
 + (void)clearAllCachedText;
+
+/**
+ Caches text to disk.
+ */
+- (void)cacheTextView;
 
 
 #pragma mark - Customization
