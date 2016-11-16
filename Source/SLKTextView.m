@@ -460,14 +460,18 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 
 - (void)setSelectedRange:(NSRange)selectedRange
 {
+    self.scrollEnabled = NO;
     [super setSelectedRange:selectedRange];
+    self.scrollEnabled = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:SLKTextViewSelectedRangeDidChangeNotification object:self userInfo:nil];
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
 {
+    self.scrollEnabled = NO;
     [super setSelectedTextRange:selectedTextRange];
+    self.scrollEnabled = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:SLKTextViewSelectedRangeDidChangeNotification object:self userInfo:nil];
 }
