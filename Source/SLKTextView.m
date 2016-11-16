@@ -476,6 +476,23 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
     [[NSNotificationCenter defaultCenter] postNotificationName:SLKTextViewSelectedRangeDidChangeNotification object:self userInfo:nil];
 }
 
+- (void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated
+{
+    // Workaround for a scrolling quirk in UIKit. The accessory view is part of the keyboard itself, so the keyboard frame is
+    // adjusted to accommodate. The text view receives a keyboard frame change notification and adjusts the scroll position.
+    // Unfortunately this seems to race the scroll animation. It calls this public method, so we override to ensure super won’t
+    // be called if it’s asking to scroll further than the caret position.
+    
+    CGRect caretRect = [self caretRectForPosition:self.selectedTextRange.end];
+    
+    if (rect.origin.y < caretRect.origin.y) {
+        // The rect is wrong. Ignore this call.
+        return;
+    }
+    
+    [super scrollRectToVisible:rect animated:animated];
+}
+
 - (void)setText:(NSString *)text
 {
     // Registers for undo management
